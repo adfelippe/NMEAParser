@@ -191,6 +191,8 @@ CNMEAParserData::ERROR_E CNMEAParser::GetGBGSV(CNMEAParserData::GSV_DATA_T &sent
 }
 
 CNMEAParserData::ERROR_E CNMEAParser::ProcessRxCommand(char *pCmd, char *pData) {
+    auto result = CNMEAParserData::ERROR_OK;
+
     //-----------------------------------------------------------------------------
     if (strcmp(pCmd, "GPGGA") == 0) {
         DataAccessSemaphoreLock();
@@ -247,9 +249,7 @@ CNMEAParserData::ERROR_E CNMEAParser::ProcessRxCommand(char *pCmd, char *pData) 
         DataAccessSemaphoreLock();
         m_GLGSA.ProcessSentence(pCmd, pData);
         DataAccessSemaphoreUnlock();
-    }
-
-    else if (strcmp(pCmd, "QZGSV") == 0) {
+    } else if (strcmp(pCmd, "QZGSV") == 0) {
         DataAccessSemaphoreLock();
         m_QZGSV.ProcessSentence(pCmd, pData);
         DataAccessSemaphoreUnlock();
@@ -257,9 +257,7 @@ CNMEAParserData::ERROR_E CNMEAParser::ProcessRxCommand(char *pCmd, char *pData) 
         DataAccessSemaphoreLock();
         m_QZGSA.ProcessSentence(pCmd, pData);
         DataAccessSemaphoreUnlock();
-    }
-
-    else if (strcmp(pCmd, "BDGSV") == 0) {
+    } else if (strcmp(pCmd, "BDGSV") == 0) {
         DataAccessSemaphoreLock();
         m_BDGSV.ProcessSentence(pCmd, pData);
         DataAccessSemaphoreUnlock();
@@ -267,13 +265,13 @@ CNMEAParserData::ERROR_E CNMEAParser::ProcessRxCommand(char *pCmd, char *pData) 
         DataAccessSemaphoreLock();
         m_BDGSA.ProcessSentence(pCmd, pData);
         DataAccessSemaphoreUnlock();
-    }
-
-    else if (strcmp(pCmd, "GBGSV") == 0) {
+    } else if (strcmp(pCmd, "GBGSV") == 0) {
         DataAccessSemaphoreLock();
         m_GBGSV.ProcessSentence(pCmd, pData);
         DataAccessSemaphoreUnlock();
+    } else {
+        result = CNMEAParserData::ERROR_FAIL;
     }
 
-    return CNMEAParserData::ERROR_OK;
+    return result;
 }
