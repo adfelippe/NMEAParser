@@ -59,6 +59,7 @@ void CNMEAParser::ResetData(void)
 	m_GAGSV.ResetData();
 	m_GAGSA.ResetData();
 	m_GARMC.ResetData();
+    m_GBGSV.ResetData();
 
 	//
 	// Unlock access to data
@@ -203,23 +204,16 @@ CNMEAParserData::ERROR_E CNMEAParser::GetGARMC(CNMEAParserData::RMC_DATA_T & sen
 	return CNMEAParserData::ERROR_OK;
 }
 
+CNMEAParserData::ERROR_E CNMEAParser::GetGBGSV(CNMEAParserData::GSV_DATA_T & sentenseData)
+{
+	DataAccessSemaphoreLock();
+	sentenseData = m_GBGSV.GetSentenceData();
+	DataAccessSemaphoreUnlock();
+	return CNMEAParserData::ERROR_OK;
+}
+
 CNMEAParserData::ERROR_E CNMEAParser::ProcessRxCommand(char * pCmd, char * pData)
 {
-
-	//
-	// Grab the talker ID
-	//
-	uint16_t u16TalkerID = (uint16_t)((uint8_t)pCmd[0]) << 8;
-	u16TalkerID |= (uint16_t)((uint8_t)pCmd[1]);
-
-	//
-	// Get the sentence ID, --XXX where XXX is the sentence ID
-	//
-	char *lpszSentenceID = &pCmd[2];
-
-	printf("Cmd: %s, TalkerID:%c%c, Sentence ID: %s\n", pCmd, (u16TalkerID >> 8) & 0xFF, (u16TalkerID) & 0xFF, lpszSentenceID);
-
-
 	//-----------------------------------------------------------------------------
 	if (strcmp(pCmd, "GPGGA") == 0) {
 		DataAccessSemaphoreLock();
@@ -309,6 +303,12 @@ CNMEAParserData::ERROR_E CNMEAParser::ProcessRxCommand(char * pCmd, char * pData
 	else if (strcmp(pCmd, "BDGSA") == 0) {
 		DataAccessSemaphoreLock();
 		m_BDGSA.ProcessSentence(pCmd, pData);
+		DataAccessSemaphoreUnlock();
+	}
+
+    else if (strcmp(pCmd, "GBGSV") == 0) {
+		DataAccessSemaphoreLock();
+		m_GBGSV.ProcessSentence(pCmd, pData);
 		DataAccessSemaphoreUnlock();
 	}
 

@@ -72,6 +72,10 @@ private:
 	CNMEASentenceGSV	m_BDGSV;												///< BDGSV Satellite message (QZSS)
 	CNMEASentenceGSA	m_BDGSA;												///< BDGSA GNSS DOP and active satellites
 
+    // BeiDou
+    CNMEASentenceGSV	m_GBGSV;												///< GBGSV Satellite message (BeiDou)
+
+
 public:
 	CNMEAParser();
 	virtual ~CNMEAParser();
@@ -199,6 +203,13 @@ public:
 	/// \return Returns ERROR_OK if successful.
 	///
 	CNMEAParserData::ERROR_E GetGARMC(CNMEAParserData::RMC_DATA_T & sentenseData);
+
+    ///
+	/// \brief Places a copy of the GBGSV data into sentenseData
+	/// \param sentenseData reference to a CNMEASentenceGSV object to place the data into.
+	/// \return Returns ERROR_OK if successful.
+	///
+    CNMEAParserData::ERROR_E GetGBGSV(CNMEAParserData::GSV_DATA_T & sentenseData);
 
 protected:
 	///
